@@ -161,10 +161,14 @@ elif menu == "🖥️ Servidores":
                 session.commit()
             st.success("Salvo!"); st.rerun()
             
-    df_serv = conn.query("SELECT * FROM servidores", ttl=0)
+        df_serv = conn.query("SELECT * FROM servidores", ttl=0)
     st.dataframe(df_serv, use_container_width=True)
     if not df_serv.empty:
         st.write("---"); st.subheader("🗑️ Excluir Registro")
         serv_para_excluir = st.selectbox("Selecione o Servidor para remover:", df_serv['nome'].unique())
         if st.button("Excluir Servidor", type="primary"):
             with conn.session as session:
+                session.execute("DELETE FROM servidores WHERE nome = :n;", {"n": serv_para_excluir})
+                session.commit()
+            st.success("Removido!")
+            st.rerun()
